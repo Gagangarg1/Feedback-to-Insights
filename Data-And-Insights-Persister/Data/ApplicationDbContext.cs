@@ -11,13 +11,14 @@ namespace InsightsAppApi.Data
         {
         }
 
-        public DbSet<UserFeedback> InsightsProject { get; set; }
+        public DbSet<ImportedFeedback> ImportedFeedbacks { get; set; }
+        public DbSet<UserInputFeedback> UserInputFeedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<UserFeedback>().ToCollection("BrainDumps");
+            modelBuilder.Entity<ImportedFeedback>().ToCollection("ImportedBrainDumps");
+            modelBuilder.Entity<UserInputFeedback>().ToCollection("UserInputBrainDump");
         }
     }
 }

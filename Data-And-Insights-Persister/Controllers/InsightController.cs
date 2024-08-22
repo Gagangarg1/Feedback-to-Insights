@@ -16,6 +16,7 @@ namespace InsightsAppApi.Controllers
         {
             _dbContext = dbContext;
         }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] IFormFile file, [FromForm] string projectName, [FromForm] string dataSource)
         {
@@ -41,7 +42,7 @@ namespace InsightsAppApi.Controllers
                             }
                         });
 
-                        var dataEntries = new List<UserFeedback>();
+                        var dataEntries = new List<ImportedFeedback>();
 
                         // Assuming the first table in the Excel file
                         var table = result.Tables[0];
@@ -55,7 +56,7 @@ namespace InsightsAppApi.Controllers
                             }
                         }
 
-                        var entry = new UserFeedback
+                        var entry = new ImportedFeedback
                         {
                             Id = Guid.NewGuid(),
                             ProjectName = projectName,
@@ -63,7 +64,7 @@ namespace InsightsAppApi.Controllers
                             FeedbackData = JsonSerializer.Serialize(feedbacks)
                         };
 
-                        await _dbContext.InsightsProject.AddAsync(entry);
+                        await _dbContext.ImportedFeedbacks.AddAsync(entry);
                         await _dbContext.SaveChangesAsync();
                     }
                 }
@@ -74,6 +75,37 @@ namespace InsightsAppApi.Controllers
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
+        }
+
+        [HttpPost]
+        [Route("BrainDump")]
+        public async Task<IActionResult> PostTextData([FromQuery] string questionGuid, [FromBody] TextDataRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Text))
+            {
+                return BadRequest("Text cannot be empty.");
+            }
+
+            if (string.IsNullOrEmpty(questionGuid))
+            {
+                return BadRequest("QuestionGuid cannot be empty.");
+            }
+
+            var brainDump = new UserInputFeedback
+            {
+                Id = Guid.NewGuid(),
+                QuestionId = Guid.Parse(questionGuid),
+                Feedback = request.Text
+            };
+
+            await _dbContext.UserInputFeedbacks.AddAsync(brainDump);
+            await _dbContext.SaveChangesAsync();
+            return Ok(new { Message = "Data saved successfully", Id = questionGuid });
+        }
+
+        public class TextDataRequest
+        {
+            public string Text { get; set; }
         }
 
     }

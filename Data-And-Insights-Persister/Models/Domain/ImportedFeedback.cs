@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace InsightsAppApi.Models.Domain
-{    public class UserFeedback
+{    public class ImportedFeedback
     {
         [Key]
         public Guid Id { get; set; }
