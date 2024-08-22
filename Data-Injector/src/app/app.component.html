@@ -1,0 +1,41 @@
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Inject your data source</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="projectName" class="form-label">Project Name</label>
+          <input type="text" class="form-control" id="projectName" formControlName="projectName" required>
+          <div
+            *ngIf="dataForm.get('projectName')?.invalid && (dataForm.get('projectName')?.dirty || dataForm.get('projectName')?.touched)"
+            class="text-danger">
+            <small *ngIf="dataForm.get('projectName')?.errors?.['required']">Project name is required.</small>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="dataSource" class="form-label">Data Source</label>
+          <select class="form-select" id="dataSource" formControlName="dataSource" required>
+            <option value="">Select a data source</option>
+            <option value="DB">Database</option>
+            <option value="Excel">Excel</option>
+          </select>
+          <div
+            *ngIf="dataForm.get('dataSource')?.invalid && (dataForm.get('dataSource')?.dirty || dataForm.get('dataSource')?.touched)"
+            class="text-danger">
+            <small *ngIf="dataForm.get('dataSource')?.errors?.['required']">Data source is required.</small>
+          </div>
+        </div>
+
+        <div *ngIf="dataForm.get('dataSource')?.value === 'Excel'" class="mb-3">
+          <label for="excelFile" class="form-label">Upload Excel File</label>
+          <input type="file" class="form-control" id="excelFile" (change)="onFileSelected($event)" accept=".xlsx,.xls">
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="dataForm.invalid">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
